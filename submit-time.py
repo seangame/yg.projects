@@ -4,34 +4,46 @@ import decimal
 import getpass
 import logging
 import argparse
+import urllib.parse
 
 import jaraco.util.logging
 import dateutil.parser
 import requests
 import keyring
 
-url = 'https://rest.netsuite.com/app/site/hosting/restlet.nl?script=522&deploy=1'
+root = 'https://rest.netsuite.com'
+ns_url = lambda path: urllib.parse.urljoin(root, path)
+system = "NetSuite"
+
+use_sandbox = True
+if use_sandbox:
+	# use sandbox
+	system += ' Sandbox'
+	root = root.replace('rest.netsuite', 'rest.sandbox.netsuite')
+
 session = requests.session()
 
 
 class Credential(object):
-	roles_url = 'https://rest.netsuite.com/rest/roles'
+	roles_url = ns_url('/rest/roles')
 	roles_auth = 'NLAuth nlauth_email={email}, nlauth_signature={password}'
 	auth_template = ("NLAuth nlauth_account={account}, nlauth_email={email}, "
 			"nlauth_signature={password}, nlauth_role={role}")
 
 	def __init__(self):
 		self.email = input("email> ")
-		password = keyring.get_password("NetSuite", self.email)
+		password = keyring.get_password(system, self.email)
 		if not password:
 			password = getpass.getpass()
 			assert password
-			keyring.set_password("NetSuite", self.email, password)
+			keyring.set_password(system, self.email, password)
 		self.password = password
 
 	def find_best_role(self):
 		roles = self.load_roles()
 		is_employee_center = lambda role: role['role']['name'].startswith('Employee Cent')
+		if use_sandbox:
+			is_employee_center = lambda role: True
 		role = next(filter(is_employee_center, roles))
 		self.account = role['account']['internalId']
 		self.role = role['account']['internalId']
@@ -91,7 +103,8 @@ def run():
 	}
 	headers.update(cred.build_auth_header())
 	data = json.dumps(entries, default=default_encode)
-	resp = session.post(url, headers=headers, data=data)
+	timebill_restlet = '/app/site/hosting/restlet.nl?script=522&deploy=1'
+	resp = session.post(ns_url(timebill_restlet), headers=headers, data=data)
 	resp.raise_for_status()
 
 def get_args():
