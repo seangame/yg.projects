@@ -47,7 +47,7 @@ class Credential(object):
 			is_employee_center = lambda role: True
 		role = next(filter(is_employee_center, roles))
 		self.account = role['account']['internalId']
-		self.role = role['account']['internalId']
+		self.role = role['role']['internalId']
 
 	def load_roles(self):
 		headers=dict(Authorization=self.roles_auth.format(**vars(self)))
