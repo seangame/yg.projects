@@ -43,9 +43,10 @@ class Credential(object):
 	def find_best_role(self):
 		roles = self.load_roles()
 		is_employee_center = lambda role: role['role']['name'].startswith('Employee Cent')
-		if use_sandbox:
-			is_employee_center = lambda role: True
-		role = next(filter(is_employee_center, roles))
+		role = next(filter(is_employee_center, roles), None)
+		if not role:
+			print("No Employee Center role")
+			raise SystemExit(1)
 		self.account = role['account']['internalId']
 		self.role = role['role']['internalId']
 
@@ -110,6 +111,7 @@ def run():
 		print()
 		print(pprint.pformat(resp.json()))
 	resp.raise_for_status()
+	print(resp.json())
 
 def get_args():
 	"""
