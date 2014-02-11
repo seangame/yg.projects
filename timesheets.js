@@ -31,6 +31,11 @@ function CreateTimebills(data_in) {
 	return result;
 }
 
+function ProjectsFor(data_in) {
+	var employee_name = data_in.name;
+	// TODO: find all projects with employee as a resource
+}
+
 function validateTimeBills(data_in) {
 	var timebills = data_in.timebill;
 	var returnMessage = "";
