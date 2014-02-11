@@ -7,7 +7,7 @@ function CreateTimebills(data_in) {
 	if (msg) {
 		var err = new Object();
 		err.status = "failed";
-		err.message= msg;
+		err.message = msg;
 		return err;
 	}
 	var timebills = data_in.timebill;
@@ -18,14 +18,14 @@ function CreateTimebills(data_in) {
 		var casetaskevent = timebill.casetaskevent;
 		var hours = timebill.hours;
 		var memo = timebill.memo;
-		var timebill = nlapiCreateRecord( 'timebill' );
-		timebill.setFieldValue( 'trandate', trandate);
-		timebill.setFieldText( 'customer', customer);
-		timebill.setFieldText( 'casetaskevent', casetaskevent);
-		timebill.setFieldValue( 'memo', memo);
-		timebill.setFieldValue( 'hours', hours);
-		var timebillid = nlapiSubmitRecord( timebill );
-		nlapiLogExecution('DEBUG','Timebill ' + timebillid + ' successfully created',timebillid);
+		var timebill = nlapiCreateRecord('timebill');
+		timebill.setFieldValue('trandate', trandate);
+		timebill.setFieldText('customer', customer);
+		timebill.setFieldText('casetaskevent', casetaskevent);
+		timebill.setFieldValue('memo', memo);
+		timebill.setFieldValue('hours', hours);
+		var timebillid = nlapiSubmitRecord(timebill);
+		nlapiLogExecution('DEBUG', 'Timebill ' + timebillid + ' successfully created', timebillid);
 	}
 	return;
 }
@@ -58,7 +58,7 @@ function validateTimeBills(data_in) {
 	}
 	if (returnMessage)
 	{
-		nlapiLogExecution('DEBUG','Validation Error',returnMessage);
+		nlapiLogExecution('DEBUG', 'Validation Error', returnMessage);
 		return returnMessage;
 	}
 }
