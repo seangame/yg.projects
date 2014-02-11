@@ -27,6 +27,7 @@ function CreateTimebills(data_in) {
 		nlapiLogExecution('DEBUG', 'Timebill ' + timebillid + ' successfully created', timebillid);
 	}
 	result.status = "success";
+	result.timebill_id = timebillid;
 	return result;
 }
 
