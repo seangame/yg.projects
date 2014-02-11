@@ -5,6 +5,7 @@ import getpass
 import logging
 import argparse
 import urllib.parse
+import pprint
 
 import jaraco.util.logging
 import dateutil.parser
@@ -105,6 +106,9 @@ def run():
 	data = json.dumps(entries, default=default_encode)
 	timebill_restlet = '/app/site/hosting/restlet.nl?script=522&deploy=1'
 	resp = session.post(ns_url(timebill_restlet), headers=headers, data=data)
+	if not resp.ok:
+		print()
+		print(pprint.pformat(resp.json()))
 	resp.raise_for_status()
 
 def get_args():
