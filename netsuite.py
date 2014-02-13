@@ -149,7 +149,7 @@ class TimeBill(NetSuite, list):
 		return cls(entries)
 
 	def submit(self):
-		log.info("Submitting", len(self), "entries.")
+		log.info("Submitting %s entries.", len(self))
 		headers = {
 			'Content-Type': 'application/json',
 		}
