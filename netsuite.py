@@ -112,6 +112,9 @@ class Entry:
 		return cls(date=date, customer=customer, case_task_event=case,
 			hours=hours, memo=memo)
 
+	def __repr__(self):
+		return repr(vars(self))
+
 class NetsuiteFailure(Exception):
 	pass
 
