@@ -101,7 +101,7 @@ class Entry:
 	def __init__(self, **kwargs):
 		vars(self).update(kwargs)
 
-	@classmethod
+	@property
 	def json(self):
 		"""
 		customer is something like "SmartTech : Test Project 005"
