@@ -40,12 +40,18 @@ class Credential(object):
 			keyring.set_password(system, self.email, password)
 		self.password = password
 
+	def is_suitable_role(self, role):
+		"""
+		Return true for roles suitable for this credential purpose. For
+		timesheets, we want the Employee Centre or Employee Center Multi-Sub.
+		"""
+		return role['role']['name'].startswith('Employee Cent')
+
 	def find_best_role(self):
 		roles = self.load_roles()
-		is_employee_center = lambda role: role['role']['name'].startswith('Employee Cent')
-		role = next(filter(is_employee_center, roles), None)
+		role = next(filter(self.is_suitable_role, roles), None)
 		if not role:
-			print("No Employee Center role")
+			print("No suitable role")
 			raise SystemExit(1)
 		self.account = role['account']['internalId']
 		self.role = role['role']['internalId']
