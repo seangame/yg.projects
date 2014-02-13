@@ -42,7 +42,7 @@ class NetSuite:
 		return data
 
 class Credential(NetSuite):
-	roles_url = ns_url('/rest/roles')
+	path = '/rest/roles'
 	roles_auth = 'NLAuth nlauth_email={email}, nlauth_signature={password}'
 	auth_template = ("NLAuth nlauth_account={account}, nlauth_email={email}, "
 			"nlauth_signature={password}, nlauth_role={role}")
@@ -74,7 +74,7 @@ class Credential(NetSuite):
 
 	def load_roles(self):
 		headers=dict(Authorization=self.roles_auth.format(**vars(self)))
-		resp = session.get(self.roles_url, headers=headers)
+		resp = session.get(ns_url(self.path), headers=headers)
 		return self.handle_response(resp)
 
 	def build_auth_header(self):
