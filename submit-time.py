@@ -6,11 +6,14 @@ import logging
 import argparse
 import urllib.parse
 import pprint
+import datetime
 
 import jaraco.util.logging
 import dateutil.parser
 import requests
 import keyring
+
+log = logging.getLogger()
 
 root = 'https://rest.netsuite.com'
 ns_url = lambda path: urllib.parse.urljoin(root, path)
@@ -68,56 +71,98 @@ class Credential(object):
 		return dict(Authorization=self.auth_template.format(**vars(self)))
 
 
-def format_entry(date, customer, case_task_event, hours, memo=''):
+class Entry:
+	date = datetime.date.today()
+	"Date of the entry"
+
+	customer = ""
+	"something like SmartTech : Test Project 005"
+
+	memo = ""
+
+	case_task_event = ""
+	"something like 'Test Task 0005 (Task)'"
+
+	hours = 0
+	"decimal.Decimal or int"
+
+	def __init__(self, **kwargs):
+		vars(self).update(kwargs)
+
+	@classmethod
+	def json(self):
+		"""
+		customer is something like "SmartTech : Test Project 005"
+		hours should be a decimal.Decimal or int.
+		"""
+		return dict(
+			trandate=self.date.strftime('%d/%m/%Y'),
+			customer=self.customer,
+			casetaskevent=self.case_task_event,
+			hours=self.hours,
+			memo=self.memo,
+		)
+
+	@classmethod
+	def solicit(cls):
+		date_input = input("Date (blank to end)> ")
+		if not date_input:
+			return
+		date = dateutil.parser.parse(date_input).date()
+		customer = input("Customer> ")
+		case = input("Case/Task/Event> ")
+		hours = decimal.Decimal(input("Hours> "))
+		memo = input("Memo (optional)> ")
+		return cls(date=date, customer=customer, case_task_event=case,
+			hours=hours, memo=memo)
+
+class NetsuiteFailure(Exception):
+	pass
+
+class NetSuite:
+	@staticmethod
+	def default_encode(o):
+		"""
+		Encode decimals as strings
+		"""
+		if isinstance(o, decimal.Decimal):
+			return str(o)
+
+	def handle_response(self, data):
+		if data.get('status') == 'failure':
+			raise NetsuiteFailure(data['message'])
+		return data
+
+class TimeBill(NetSuite, list):
 	"""
-	customer is something like "SmartTech : Test Project 005"
-	case task event is something like "Test Task 005 (Task)"
-	hours should be a decimal.Decimal or int.
+	List of entries
 	"""
-	return dict(
-		trandate=date.strftime('%d/%m/%Y'),
-		customer=customer,
-		casetaskevent=case_task_event,
-		hours=hours,
-		memo=memo,
-	)
+	restlet = '/app/site/hosting/restlet.nl?script=522&deploy=1'
 
-def get_entry():
-	date_input = input("Date (blank to end)> ")
-	if not date_input:
-		return
-	date = dateutil.parser.parse(date_input).date()
-	customer = input("Customer> ")
-	case = input("Case/Task/Event> ")
-	hours = decimal.Decimal(input("Hours> "))
-	memo = input("Memo (optional)> ")
-	return format_entry(date, customer, case, hours, memo)
+	@property
+	def json(self):
+		return dict(timebill=[entry.json for entry in self])
 
-def get_entries():
-	raw_entries = (get_entry() for n in itertools.count())
-	entries = itertools.takewhile(bool, raw_entries)
-	return dict(timebill=list(entries))
+	@classmethod
+	def solicit(cls):
+		raw_entries = (Entry.solicit() for n in itertools.count())
+		entries = itertools.takewhile(bool, raw_entries)
+		return cls(entries)
 
-def default_encode(o):
-	if isinstance(o, decimal.Decimal):
-		return str(o)
+	def submit(self):
+		log.info("Submitting", len(self), "entries.")
+		headers = {
+			'Content-Type': 'application/json',
+		}
+		cred = Credential()
+		headers.update(cred.build_auth_header())
+		data = json.dumps(self.json, default=self.default_encode)
+		resp = session.post(ns_url(self.restlet), headers=headers, data=data)
+		resp.raise_for_status()
+		return self.handle_response(resp.json())
 
 def run():
-	cred = Credential()
-	entries = get_entries()
-	print("Submitting", len(entries['timebill']), "entries.")
-	headers = {
-		'Content-Type': 'application/json',
-	}
-	headers.update(cred.build_auth_header())
-	data = json.dumps(entries, default=default_encode)
-	timebill_restlet = '/app/site/hosting/restlet.nl?script=522&deploy=1'
-	resp = session.post(ns_url(timebill_restlet), headers=headers, data=data)
-	if not resp.ok:
-		print()
-		print(pprint.pformat(resp.json()))
-	resp.raise_for_status()
-	print(resp.json())
+	TimeBill.solicit().submit()
 
 def get_args():
 	"""
