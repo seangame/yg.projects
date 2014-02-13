@@ -16,9 +16,8 @@ root = 'https://rest.netsuite.com'
 ns_url = lambda path: urllib.parse.urljoin(root, path)
 system = "NetSuite"
 
-use_sandbox = True
-if use_sandbox:
-	# use sandbox
+def use_sandbox():
+	global system, root
 	system += ' Sandbox'
 	root = root.replace('rest.netsuite', 'rest.sandbox.netsuite')
 

@@ -4,15 +4,17 @@ import argparse
 import requests
 import jaraco.util.logging
 
-from netsuite import TimeBill
+import netsuite
 
 def run():
-	TimeBill.solicit().submit()
+	netsuite.use_sandbox()
+	netsuite.TimeBill.solicit().submit()
 
 def get_args():
 	"""
 	Parse command-line arguments, including the Command and its arguments.
 	"""
+
 	parser = argparse.ArgumentParser()
 	jaraco.util.logging.add_arguments(parser)
 	return parser.parse_args()
