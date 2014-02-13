@@ -24,7 +24,24 @@ def use_sandbox():
 session = requests.session()
 
 
-class Credential(object):
+class NetSuite:
+	@staticmethod
+	def default_encode(o):
+		"""
+		Encode decimals as strings
+		"""
+		if isinstance(o, decimal.Decimal):
+			return str(o)
+
+	def handle_response(self, resp):
+		if not resp.ok:
+			raise NetsuiteFailure(resp.json())
+		data = resp.json()
+		if data.get('status') == 'failure':
+			raise NetsuiteFailure(data['message'])
+		return data
+
+class Credential(NetSuite):
 	roles_url = ns_url('/rest/roles')
 	roles_auth = 'NLAuth nlauth_email={email}, nlauth_signature={password}'
 	auth_template = ("NLAuth nlauth_account={account}, nlauth_email={email}, "
@@ -58,8 +75,7 @@ class Credential(object):
 	def load_roles(self):
 		headers=dict(Authorization=self.roles_auth.format(**vars(self)))
 		resp = session.get(self.roles_url, headers=headers)
-		resp.raise_for_status()
-		return resp.json()
+		return self.handle_response(resp)
 
 	def build_auth_header(self):
 		if not 'role' in vars(self):
@@ -118,20 +134,6 @@ class Entry:
 class NetsuiteFailure(Exception):
 	pass
 
-class NetSuite:
-	@staticmethod
-	def default_encode(o):
-		"""
-		Encode decimals as strings
-		"""
-		if isinstance(o, decimal.Decimal):
-			return str(o)
-
-	def handle_response(self, data):
-		if data.get('status') == 'failure':
-			raise NetsuiteFailure(data['message'])
-		return data
-
 class TimeBill(NetSuite, list):
 	"""
 	List of entries
@@ -157,5 +159,4 @@ class TimeBill(NetSuite, list):
 		headers.update(cred.build_auth_header())
 		data = json.dumps(self.json, default=self.default_encode)
 		resp = session.post(ns_url(self.restlet), headers=headers, data=data)
-		resp.raise_for_status()
-		return self.handle_response(resp.json())
+		return self.handle_response(resp)
