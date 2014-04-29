@@ -20,6 +20,11 @@ setup_params = dict(
 	setup_requires=[
 		'hgtools',
 	],
+	entry_points=dict(
+		console_scripts=[
+			'submit-time: yg.projects.commands:submit_time'
+		],
+	),
 )
 if __name__ == '__main__':
 	setuptools.setup(**setup_params)
