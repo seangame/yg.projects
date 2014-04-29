@@ -78,3 +78,13 @@ def print_holidays():
 	for holiday in holidays_for_year(year):
 		print("|| {holiday.name} || {holiday.indication} || "
 			"{holiday.observed:%A, %B %d} ||".format(**vars()))
+
+def date_range(start, end):
+	one_day = datetime.timedelta(days=1)
+	day = start
+	while day < end:
+		yield day
+		day += one_day
+
+def weekdays(range):
+	return (date for date in range if date.weekday() < 5)
