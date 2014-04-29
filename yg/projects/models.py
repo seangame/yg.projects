@@ -21,7 +21,7 @@ class Project:
 class Projects(list):
 	@classmethod
 	def from_csv(cls, filename='projects.csv'):
-		with open('projects.csv') as stream:
+		with open(filename) as stream:
 			return cls(map(Project.from_dict, csv.DictReader(stream)))
 
 	def best(self, short_name):
