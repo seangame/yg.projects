@@ -4,11 +4,11 @@ import argparse
 import requests
 import jaraco.util.logging
 
-import netsuite
+import yg.netsuite
 
 def run():
-	netsuite.use_sandbox()
-	netsuite.TimeBill.solicit().submit()
+	yg.netsuite.use_sandbox()
+	yg.netsuite.TimeBill.solicit().submit()
 
 def get_args():
 	"""
@@ -27,11 +27,8 @@ def setup_requests_logging(level):
 	# enable debugging at httplib level
 	requests.packages.urllib3.connectionpool.HTTPConnection.debuglevel = level <= logging.DEBUG
 
-def handle_command_line():
+def submit_time():
 	args = get_args()
 	jaraco.util.logging.setup(args, format="%(message)s")
 	setup_requests_logging(args.log_level)
 	run()
-
-if __name__ == '__main__':
-	handle_command_line()
