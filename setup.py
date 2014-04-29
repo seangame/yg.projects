@@ -14,7 +14,7 @@ setup_params = dict(
 	author_email="jason.coombs@yougov.com",
 	description="yg.projects",
 	long_description=long_description,
-	url="https://yougov.kilnhg.com/Code/Repositories/support/Netsuite",
+	url="https://yougov.kilnhg.com/Code/Repositories/support/NetSuite",
 	packages=setuptools.find_packages(),
 	namespace_packages=['yg'],
 	setup_requires=[
@@ -25,6 +25,13 @@ setup_params = dict(
 			'submit-time=yg.projects.commands:submit_time'
 		],
 	),
+	classifiers = [
+		"Development Status :: 5 - Production/Stable",
+		"Programming Language :: Python :: 3.2",
+		"Programming Language :: Python :: 3.3",
+		"Programming Language :: Python :: 3.4",
+		"Programming Language :: Python :: 3.5",
+	],
 )
 if __name__ == '__main__':
 	setuptools.setup(**setup_params)
