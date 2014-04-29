@@ -4,6 +4,7 @@ YouGov calendar modules
 
 import datetime
 import functools
+import sys
 
 import dateutil.relativedelta as rd
 
@@ -68,3 +69,12 @@ def exclude_holidays(days):
 		day for day in days
 		if day not in holidays_for_year_cached(day.year)
 	)
+
+def print_holidays():
+	year = int(sys.argv[1])
+	print("= Holidays {year} =".format(**vars()), end='\n\n')
+
+	print("|| '''Holiday''' || '''Day Indicated''' || '''Day Observed''' ||")
+	for holiday in holidays_for_year(year):
+		print("|| {holiday.name} || {holiday.indication} || "
+			"{holiday.observed:%A, %B %d} ||".format(**vars()))
