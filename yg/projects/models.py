@@ -1,4 +1,7 @@
 import csv
+import itertools
+
+import yg.netsuite
 
 class Project:
 	def __init__(self, **params):
@@ -51,3 +54,17 @@ class Distribution(dict):
 		ratio = self[key] / self.total
 		portion = ratio*value
 		return round(portion*self.resolution)/self.resolution
+
+	def create_timebill(self, days, hours=9):
+		"""
+		Given a distribution of projects, apply that distribution to the
+		hours, returning a TimeBill of entries for each day in days.
+		"""
+		return yg.netsuite.TimeBill(
+			yg.netsuite.Entry(
+				date=day,
+				customer=str(proj),
+				hours=self.portion(proj, hours),
+			)
+			for day, proj in itertools.product(days, self)
+		)
