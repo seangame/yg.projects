@@ -32,6 +32,13 @@ setup_params = dict(
 		"Programming Language :: Python :: 3.4",
 		"Programming Language :: Python :: 3.5",
 	],
+	install_requires = [
+		'six',
+		'requests',
+		'python-dateutil',
+		'keyring',
+		'jaraco.util',
+	],
 )
 if __name__ == '__main__':
 	setuptools.setup(**setup_params)
