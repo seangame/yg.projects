@@ -67,8 +67,6 @@ def holidays_for_year_cached(year):
 def is_holiday(day):
 	return day in holidays_for_year_cached(day.year)
 
-exclude_holidays = functools.partial(itertools.filterfalse, is_holiday)
-
 def print_holidays():
 	year = int(sys.argv[1])
 	print("= Holidays {year} =".format(**vars()), end='\n\n')
@@ -87,3 +85,10 @@ def date_range(start, end):
 
 def weekdays(range):
 	return (date for date in range if date.weekday() < 5)
+
+def resolve_days(input_days, *exclusion_tests):
+	"""
+	Given an iterable of days, exclude any days that pass any exclusion test.
+	"""
+	exclusions = lambda day: any(test(day) for test in exclusion_tests)
+	return itertools.filterfalse(exclusions, input_days)
