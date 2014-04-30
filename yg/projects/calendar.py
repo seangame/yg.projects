@@ -86,9 +86,17 @@ def date_range(start, end):
 def weekdays(range):
 	return (date for date in range if date.weekday() < 5)
 
+def always_date(date):
+	if isinstance(date, datetime.datetime):
+		return date.date()
+	return date
+
 def resolve_days(input_days, *exclusion_tests):
 	"""
 	Given an iterable of days, exclude any days that pass any exclusion test.
+	Exclusion tests should take a datetime.date object and return a boolean
+	if the date should be excluded.
 	"""
 	exclusions = lambda day: any(test(day) for test in exclusion_tests)
-	return itertools.filterfalse(exclusions, input_days)
+	dates = map(always_date, input_days)
+	return itertools.filterfalse(exclusions, dates)
