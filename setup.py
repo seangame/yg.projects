@@ -33,7 +33,6 @@ setup_params = dict(
 		"Programming Language :: Python :: 3.5",
 	],
 	install_requires = [
-		'six',
 		'requests',
 		'python-dateutil',
 		'keyring',

@@ -5,8 +5,8 @@ YouGov calendar modules
 import datetime
 import functools
 import sys
+import itertools
 
-import six
 import dateutil.relativedelta as rd
 
 class Holiday(datetime.date):
@@ -67,7 +67,7 @@ def holidays_for_year_cached(year):
 def is_holiday(day):
 	return day in holidays_for_year_cached(day.year)
 
-exclude_holidays = functools.partial(six.moves.filterfalse, is_holiday)
+exclude_holidays = functools.partial(itertools.filterfalse, is_holiday)
 
 def print_holidays():
 	year = int(sys.argv[1])
