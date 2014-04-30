@@ -6,6 +6,7 @@ import datetime
 import functools
 import sys
 
+import six
 import dateutil.relativedelta as rd
 
 class Holiday(datetime.date):
@@ -63,12 +64,10 @@ def holidays_for_year(year):
 def holidays_for_year_cached(year):
 	return tuple(holidays_for_year(year))
 
+def is_holiday(day):
+	return day in holidays_for_year_cached(day.year)
 
-def exclude_holidays(days):
-	return (
-		day for day in days
-		if day not in holidays_for_year_cached(day.year)
-	)
+exclude_holidays = functools.partial(six.moves.filterfalse, is_holiday)
 
 def print_holidays():
 	year = int(sys.argv[1])
