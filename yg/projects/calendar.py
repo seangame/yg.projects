@@ -7,6 +7,7 @@ import functools
 import sys
 import itertools
 
+import dateutil.parser
 import dateutil.relativedelta as rd
 
 class Holiday(datetime.date):
@@ -100,3 +101,12 @@ def resolve_days(input_days, *exclusion_tests):
 	exclusions = lambda day: any(test(day) for test in exclusion_tests)
 	dates = map(always_date, input_days)
 	return itertools.filterfalse(exclusions, dates)
+
+def month_days(input):
+	"""
+	Yield each day of a month indicated by the input month, such as 'May' or
+	'December' or 'Dec'.
+	"""
+	start = dateutil.parser.parse(input).replace(day=1)
+	end = start + rd.relativedelta(months=1)
+	return date_range(start, end)
