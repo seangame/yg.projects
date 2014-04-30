@@ -75,7 +75,18 @@ class Credential(NetSuite):
 	def load_roles(self):
 		headers=dict(Authorization=self.roles_auth.format(**vars(self)))
 		resp = session.get(ns_url(self.path), headers=headers)
-		return self.handle_response(resp)
+		try:
+			return self.handle_response(resp)
+		except NetsuiteFailure as exc:
+			exc.on_password_fail(self.reset_password)
+
+	def reset_password(self, failure):
+		print("password was rejected")
+		password = getpass.getpass("new password> ")
+		if not password:
+			return
+		keyring.set_password(system, self.email, password)
+		print("password changed.")
 
 	def build_auth_header(self):
 		if not 'role' in vars(self):
@@ -132,7 +143,11 @@ class Entry:
 		return repr(vars(self))
 
 class NetsuiteFailure(Exception):
-	pass
+	def on_password_fail(self, callback):
+		message = self.args[0]
+		err_msg = message['error']['message']
+		if 'invalid email address or password' in err_msg:
+			callback(self)
 
 class TimeBill(NetSuite, list):
 	"""
