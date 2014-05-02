@@ -32,7 +32,8 @@ function CreateTimebills(data_in) {
 }
 
 function ProjectsFor(data_in) {
-	return nsapiSearchRecord(id=6546));
+	var search_id = 6546;
+	return nlapiSearchRecord(null, search_id, null, null);
 }
 
 function validateTimeBills(data_in) {
