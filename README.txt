@@ -13,21 +13,16 @@ entry. Here is an example script leveraging yg.projects for entering time on
 two projects in a 60/40 distribution::
 
     import datetime
-    import argparse
 
-    import jaraco.util.timing
-    from yg.projects import calendar
     from yg.projects import models
-    import yg.netsuite
+    import yg.projects.commands as cmds
 
-
-    class TimeEntry:
-        @staticmethod
-        def load_project_dist():
-            ps = models.Projects.from_csv()
+    class TimeEntry(cmds.TimeEntry):
+        @classmethod
+        def get_distribution(cls, projects):
             dist = models.Distribution()
-            dist[ps.Gryphon]=6
-            dist[ps.Datum]=4
+            dist[projects.Gryphon]=6
+            dist[projects.Datum]=4
             return dist
 
         def is_vacation(date):
@@ -36,27 +31,7 @@ two projects in a 60/40 distribution::
                 datetime.date(2014,4,18),
             ]
 
-        exclusions = is_vacation, calendar.is_holiday
-
-        @staticmethod
-        def get_args():
-            parser = argparse.ArgumentParser()
-            parser.add_argument('month', type=calendar.month_days)
-            parser.add_argument('--prod', action="store_false", default=True,
-                dest="sandbox")
-            return parser.parse_args()
-
-        @classmethod
-        def run(cls):
-            args = cls.get_args()
-            if args.sandbox:
-                yg.netsuite.use_sandbox()
-            days = calendar.resolve_days(calendar.weekdays(args.month), *cls.exclusions)
-            tb = cls.load_project_dist().create_timebill(days, hours=8)
-            print("Submitting", len(tb), "entries to NetSuite...")
-            with jaraco.util.timing.Stopwatch() as watch:
-                tb.submit()
-            print("Completed in", watch.elapsed)
+        exclusions = cmds.TimeEntry.exclusions + (is_vacation,)
 
     if __name__ == '__main__':
         TimeEntry.run()

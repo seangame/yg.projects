@@ -84,8 +84,11 @@ def date_range(start, end):
 		yield day
 		day += one_day
 
+def is_weekend(date):
+	return date.weekday() > 4
+
 def weekdays(range):
-	return (date for date in range if date.weekday() < 5)
+	return itertools.filterfalse(is_weekend, range)
 
 def always_date(date):
 	if isinstance(date, datetime.datetime):
