@@ -61,7 +61,10 @@ two projects in a 60/40 distribution::
     if __name__ == '__main__':
         TimeEntry.run()
 
-This script could then be invoked as so::
+One must download a `CSV report of projects
+<http://yg-public.s3.amazonaws.com/r/13/projects.csv>`_ to './projects.csv'.
+
+Then, the script could be invoked as so::
 
     python enter-time.py apr
 
