@@ -12,6 +12,7 @@ yg.projects facilitates most of the heavy lifting involved with timesheet
 entry. Here is an example script leveraging yg.projects for entering time on
 two projects in a 60/40 distribution::
 
+    # enter-time.py
     import datetime
 
     from yg.projects import models
