@@ -32,8 +32,7 @@ function CreateTimebills(data_in) {
 }
 
 function ProjectsFor(data_in) {
-	var employee_name = data_in.name;
-	// TODO: find all projects with employee as a resource
+	return nsapiSearchRecord(id=6546));
 }
 
 function validateTimeBills(data_in) {
