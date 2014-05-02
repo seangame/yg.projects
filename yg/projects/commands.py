@@ -70,7 +70,7 @@ class TimeEntry:
 		if args.sandbox:
 			yg.netsuite.use_sandbox()
 		days = calendar.resolve_days(args.month, *cls.exclusions)
-		projects = models.Projects.from_csv()
+		projects = models.Projects.from_url()
 		dist = cls.get_project_distribution(projects)
 		tb = dist.create_timebill(days, hours=cls.hours_per_day)
 		print("Submitting", len(tb), "entries to NetSuite...")

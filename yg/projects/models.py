@@ -1,6 +1,8 @@
 import csv
 import itertools
 
+import requests
+
 import yg.netsuite
 
 class Project:
@@ -23,6 +25,14 @@ class Projects(list):
 	def from_csv(cls, filename='projects.csv'):
 		with open(filename) as stream:
 			return cls(map(Project.from_dict, csv.DictReader(stream)))
+
+	@classmethod
+	def from_url(cls,
+			url='http://yg-public.s3.amazonaws.com/r/13/projects.csv'):
+		resp = requests.get(url, stream=True)
+		resp.raise_for_status()
+		lines = resp.iter_lines(decode_unicode=True)
+		return cls(map(Project.from_dict, csv.DictReader(lines)))
 
 	def best(self, short_name):
 		return next(
