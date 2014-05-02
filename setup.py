@@ -22,7 +22,7 @@ setup_params = dict(
 	],
 	entry_points=dict(
 		console_scripts=[
-			'submit-time=yg.projects.commands:submit_time'
+			'submit-time=yg.projects.commands:InteractiveEntry.run',
 		],
 	),
 	classifiers = [
@@ -36,7 +36,7 @@ setup_params = dict(
 		'requests',
 		'python-dateutil',
 		'keyring',
-		'jaraco.util',
+		'jaraco.util>=10,<11',
 	],
 )
 if __name__ == '__main__':
