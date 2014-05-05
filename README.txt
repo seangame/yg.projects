@@ -20,7 +20,7 @@ two projects in a 60/40 distribution::
 
     class TimeEntry(cmds.TimeEntry):
         @classmethod
-        def get_distribution(cls, projects):
+        def get_project_distribution(cls, projects):
             dist = models.Distribution()
             dist[projects.Gryphon]=6
             dist[projects.Datum]=4

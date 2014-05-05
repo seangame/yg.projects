@@ -42,7 +42,7 @@ class TimeEntry:
 	"number of hours worked per day"
 
 	@classmethod
-	def get_distribution(cls, projects):
+	def get_project_distribution(cls, projects):
 		"""
 		Return a models.Distribution of models.Projects over which hours
 		should be distributed.
