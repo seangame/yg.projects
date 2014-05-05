@@ -79,6 +79,7 @@ class Credential(NetSuite):
 			return self.handle_response(resp)
 		except NetsuiteFailure as exc:
 			exc.on_password_fail(self.reset_password)
+			raise
 
 	def reset_password(self, failure):
 		print("password was rejected")
