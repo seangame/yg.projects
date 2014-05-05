@@ -25,6 +25,9 @@ session = requests.session()
 
 
 class NetSuite:
+	"""
+	Common NetSuite functionality
+	"""
 	@staticmethod
 	def default_encode(o):
 		"""
