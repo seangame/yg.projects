@@ -1,6 +1,8 @@
-// borrowed from http://blog.prolecto.com/2011/12/18/netsuite-restlet-sample-program-exploits-new-power/
 
 function CreateTimebills(data_in) {
+	// based on the sample restlet described at
+	// http://blog.prolecto.com/2011/12/18/netsuite-restlet-sample-program-exploits-new-power/
+
 	//nlapiLogExecution('DEBUG','createRecord',(typeof data_in.timebill));
 	var result = new Object();
 	var msg = validateTimeBills(data_in);
