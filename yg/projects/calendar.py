@@ -6,6 +6,7 @@ import datetime
 import functools
 import sys
 import itertools
+import importlib
 
 import dateutil.parser
 import dateutil.relativedelta as rd
@@ -23,6 +24,24 @@ class Holiday(datetime.date):
 	def observed(self):
 		delta = rd.relativedelta(weekday=self.weekend_hint)
 		return self + delta if self.weekday() > 4 else self
+
+	@classmethod
+	def from_workalendar(cls, cal, year):
+		return [cls(name, None, date) for date, name in cal.holidays(year)]
+
+
+def load_workalendar(country):
+	"""
+	Load the holidays for country and year.
+	Country should be something like America/United States.
+	"""
+	region, sep, country = country.partition('/')
+	region = region.lower()
+	module = importlib.import_module('workalendar.' + region)
+	country_cls_name = country.replace(' ', '')
+	cls = getattr(module, country_cls_name)
+	return cls()
+
 
 def holidays_for_year(year):
 	"""

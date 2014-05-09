@@ -37,6 +37,7 @@ setup_params = dict(
 		'python-dateutil',
 		'keyring',
 		'jaraco.util>=10,<11',
+		'workalendar',
 	],
 )
 if __name__ == '__main__':
