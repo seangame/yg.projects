@@ -8,10 +8,15 @@ import sys
 import itertools
 import importlib
 
+import workalendar.america
 import dateutil.parser
 import dateutil.relativedelta as rd
 
 class Holiday(datetime.date):
+	"""
+	A named holiday with a name, a textual indicated date, the indicated date,
+	and a weekend hint (used to calculate an observed date).
+	"""
 	def __new__(cls, name, indication, date, weekend_hint=rd.MO(1)):
 		return datetime.date.__new__(cls, date.year, date.month, date.day)
 
@@ -22,12 +27,20 @@ class Holiday(datetime.date):
 
 	@property
 	def observed(self):
+		"""
+		The date this holiday is observed. If the holiday occurs on a weekend,
+		it is normally observed on the following Monday.
+		The weekend hint might be rd.FR(-1), meaning the previous Friday.
+		"""
 		delta = rd.relativedelta(weekday=self.weekend_hint)
 		return self + delta if self.weekday() > 4 else self
 
 	@classmethod
 	def from_workalendar(cls, cal, year):
-		return [cls(name, None, date) for date, name in cal.holidays(year)]
+		return [
+			cls(name, None, date)
+			for date, name in cal.holidays(year)
+		]
 
 
 def load_workalendar(country):
@@ -43,10 +56,18 @@ def load_workalendar(country):
 	return cls()
 
 
+class YouGovAmericaCalendar(workalendar.america.UnitedStates):
+	include_christmas_eve = True
+	include_corpus_christi = False
+
 def holidays_for_year(year):
 	"""
 	Produce the YouGov America holidays for the given year.
 	"""
+	cal = YouGovAmericaCalendar()
+	return Holiday.from_workalendar(cal, year)
+
+def _(year):
 	yield Holiday("New Year's Day", "January 1st", datetime.date(year, 1, 1))
 
 	yield Holiday("Martin L King's Birthday", "3rd Monday in January",
@@ -132,3 +153,6 @@ def month_days(input):
 	start = dateutil.parser.parse(input).replace(day=1)
 	end = start + rd.relativedelta(months=1)
 	return date_range(start, end)
+
+if __name__ == '__main__':
+	print_holidays()
