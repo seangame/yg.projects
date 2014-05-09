@@ -15,7 +15,16 @@ import dateutil.relativedelta as rd
 class Holiday(datetime.date):
 	"""
 	A named holiday with a name, a textual indicated date, the indicated date,
-	and a weekend hint (used to calculate an observed date).
+	and a weekend hint (used to calculate an observed date). For example, to
+	create a holiday for New Year's Day, but have it observed on Monday if it
+	falls on a weekend:
+
+	>>> nyd = Holiday("New year", "First day in January", datetime.date(2014, 1, 1))
+
+	But if New Year's Eve is also a holiday, and it too falls on a weekend,
+	many calendars will have that holiday fall back to the previous friday:
+
+	>>> nye = Holiday("New year's eve", "Last day of the year", datetime.date(2014, 12, 31), rd.FR(-1))
 	"""
 	def __new__(cls, name, indication, date, weekend_hint=rd.MO(1)):
 		return datetime.date.__new__(cls, date.year, date.month, date.day)
