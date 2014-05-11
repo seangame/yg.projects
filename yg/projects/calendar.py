@@ -7,13 +7,29 @@ import sys
 import itertools
 
 import workalendar.america
+import workalendar.europe
 from workalendar.core import Holiday
 import dateutil.parser
 import dateutil.relativedelta as rd
 
 
-class YouGovAmericaCalendar(workalendar.america.UnitedStates):
+class Vacation:
+	"""
+	Mix-in for vacation_support
+	"""
+	vacation_days = ()
+
+	def is_working_day(self, day, *args, **kwargs):
+		parent_res = super().is_working_day(*args, **kwargs)
+		return parent_res and not self.is_vacation(day)
+
+	def is_vacation(self, day):
+		return day in self.vacation_days
+
+
+class YouGovAmericaCalendar(Vacation, workalendar.america.UnitedStates):
 	include_corpus_christi = False
+	hours_per_day = 8
 
 	FIXED_HOLIDAYS = workalendar.america.UnitedStates.FIXED_HOLIDAYS + (
 		Holiday(
@@ -55,6 +71,13 @@ class YouGovAmericaCalendar(workalendar.america.UnitedStates):
 		days = self._remove_days(days)
 		return list(days)
 
+
+class YouGovCalendar(Vacation, workalendar.europe.UnitedKingdom):
+	hours_per_day = 7.5
+
+	# todo: implement actual YouGov UK holidays
+
+
 def print_holidays(cal=None):
 	cal = cal or YouGovAmericaCalendar()
 	year = int(sys.argv[1])
@@ -74,27 +97,6 @@ def date_range(start, end):
 	while day < end:
 		yield day
 		day += one_day
-
-def is_weekend(date):
-	return date.weekday() > 4
-
-def weekdays(range):
-	return itertools.filterfalse(is_weekend, range)
-
-def always_date(date):
-	if isinstance(date, datetime.datetime):
-		return date.date()
-	return date
-
-def resolve_days(input_days, *exclusion_tests):
-	"""
-	Given an iterable of days, exclude any days that pass any exclusion test.
-	Exclusion tests should take a datetime.date object and return a boolean
-	if the date should be excluded.
-	"""
-	exclusions = lambda day: any(test(day) for test in exclusion_tests)
-	dates = map(always_date, input_days)
-	return itertools.filterfalse(exclusions, dates)
 
 def month_days(input):
 	"""

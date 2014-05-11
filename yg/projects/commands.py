@@ -2,6 +2,7 @@ import argparse
 
 import jaraco.util.logging
 import jaraco.util.timing
+from workalendar.core import Calendar
 
 import yg.netsuite
 from . import calendar
@@ -35,11 +36,8 @@ class TimeEntry:
 	A command-line entry point for automating time entry
 	"""
 
-	exclusions = calendar.is_weekend, calendar.is_holiday
-	"tuple of exclusion functions for days to exclude from submission"
-
-	hours_per_day = 8
-	"number of hours worked per day"
+	calendar = Calendar()
+	"A workalendar Calendar instance suitable for resolving 'working days'"
 
 	@classmethod
 	def get_project_distribution(cls, projects):
@@ -62,10 +60,10 @@ class TimeEntry:
 		args = cls.get_args()
 		if args.sandbox:
 			yg.netsuite.use_sandbox()
-		days = calendar.resolve_days(args.month, *cls.exclusions)
+		days = map(calendar.is_working_day, args.month)
 		projects = models.Projects.from_url()
 		dist = cls.get_project_distribution(projects)
-		tb = dist.create_timebill(days, hours=cls.hours_per_day)
+		tb = dist.create_timebill(days, hours=cls.calendar.hours_per_day)
 		print("Submitting", len(tb), "entries to NetSuite...")
 		with jaraco.util.timing.Stopwatch() as watch:
 			tb.submit()

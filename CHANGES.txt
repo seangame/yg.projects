@@ -1,0 +1,7 @@
+4.0
+===
+
+* yg.projects now leverages the ``workalendar`` project. All filtering of
+  working days is now done through a Calendar subclass. Scripts using
+  yg.projects will need to be updated to follow the new mode demonstrated in
+  the README.

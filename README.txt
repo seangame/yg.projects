@@ -17,22 +17,23 @@ two projects in a 60/40 distribution::
 
     from yg.projects import models
     import yg.projects.commands as cmds
+    from yg.projects import calendar
+
+    class MyCalendar(calendar.YouGovAmericaCalendar):
+        vacation_days = (
+            datetime.date(2014, 4, 17),
+            datetime.date(2014, 4, 18),
+        )
 
     class TimeEntry(cmds.TimeEntry):
+        calendar = MyCalendar()
+
         @classmethod
         def get_project_distribution(cls, projects):
             dist = models.Distribution()
             dist[projects.Gryphon]=6
             dist[projects.Datum]=4
             return dist
-
-        def is_vacation(date):
-            return date in [
-                datetime.date(2014,4,17),
-                datetime.date(2014,4,18),
-            ]
-
-        exclusions = cmds.TimeEntry.exclusions + (is_vacation,)
 
     if __name__ == '__main__':
         TimeEntry.run()
