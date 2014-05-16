@@ -60,7 +60,7 @@ class TimeEntry:
 		args = cls.get_args()
 		if args.sandbox:
 			yg.netsuite.use_sandbox()
-		days = map(calendar.is_working_day, args.month)
+		days = filter(cls.calendar.is_working_day, args.month)
 		projects = models.Projects.from_url()
 		dist = cls.get_project_distribution(projects)
 		tb = dist.create_timebill(days, hours=cls.calendar.hours_per_day)

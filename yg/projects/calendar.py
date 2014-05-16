@@ -20,7 +20,7 @@ class Vacation:
 	vacation_days = ()
 
 	def is_working_day(self, day, *args, **kwargs):
-		parent_res = super().is_working_day(*args, **kwargs)
+		parent_res = super().is_working_day(day, *args, **kwargs)
 		return parent_res and not self.is_vacation(day)
 
 	def is_vacation(self, day):
@@ -95,7 +95,7 @@ def date_range(start, end):
 	one_day = datetime.timedelta(days=1)
 	day = start
 	while day < end:
-		yield day
+		yield day.date()
 		day += one_day
 
 def month_days(input):
