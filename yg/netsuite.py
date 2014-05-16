@@ -123,12 +123,19 @@ class Entry:
 		hours should be a decimal.Decimal or int.
 		"""
 		return dict(
-			trandate=self.date.strftime('%d/%m/%Y'),
+			trandate=self.trandate,
 			customer=self.customer,
 			casetaskevent=self.case_task_event,
 			hours=self.hours,
 			memo=self.memo,
 		)
+
+	@property
+	def trandate(self):
+		"""
+		The transaction date formatted for NetSuite
+		"""
+		return self.date.strftime('%d/%m/%Y')
 
 	@classmethod
 	def solicit(cls):
