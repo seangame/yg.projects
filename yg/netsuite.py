@@ -40,7 +40,7 @@ class NetSuite:
 		if not resp.ok:
 			raise NetsuiteFailure(resp.json())
 		data = resp.json()
-		if isinstance(data, dict) and data.get('status') == 'failure':
+		if isinstance(data, dict) and data.get('status') == 'failed':
 			raise NetsuiteFailure(data['message'])
 		return data
 
