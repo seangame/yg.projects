@@ -21,7 +21,7 @@ function CreateTimebills(data_in) {
 		var hours = timebill.hours;
 		var memo = timebill.memo;
 		var timebill = nlapiCreateRecord('timebill');
-		timebill.setFieldValue('trandate', trandate);
+		timebill.setFieldValue('trandate', nsdate);
 		timebill.setFieldText('customer', customer);
 		timebill.setFieldText('casetaskevent', casetaskevent);
 		timebill.setFieldValue('memo', memo);
