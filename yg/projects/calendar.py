@@ -63,11 +63,11 @@ class YouGovAmericaCalendar(Vacation, workalendar.america.UnitedStates):
 		)
 
 	def get_variable_days(self, year):
-		days = super(YouGovAmericaCalendar, self).get_variable_days(year)
+		days = super().get_variable_days(year)
 		return list(itertools.chain(days, self._add_days(year)))
 
 	def get_calendar_holidays(self, year):
-		days = super(YouGovAmericaCalendar, self).get_calendar_holidays(year)
+		days = super().get_calendar_holidays(year)
 		days = self._remove_days(days)
 		return list(days)
 
