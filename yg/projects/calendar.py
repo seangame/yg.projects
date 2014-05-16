@@ -103,7 +103,7 @@ def date_range(start, end):
 	one_day = datetime.timedelta(days=1)
 	day = start
 	while day < end:
-		yield day.date()
+		yield day
 		day += one_day
 
 def month_days(input):
@@ -131,7 +131,7 @@ def month_days(input):
 	>>> isinstance(days[0], datetime.date)
 	True
 	"""
-	start = dateutil.parser.parse(input).replace(day=1)
+	start = dateutil.parser.parse(input).replace(day=1).date()
 	end = start + rd.relativedelta(months=1)
 	return date_range(start, end)
 
