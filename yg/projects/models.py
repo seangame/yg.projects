@@ -49,9 +49,10 @@ class Distribution(dict):
 	>>> d = Distribution()
 	>>> d['foo'] = 2
 	>>> d['bar'] = 1
+
 	foo's portion is 2/3 at a resolution of 1/10
-	>>> d.portion('foo')
-	Decimal('0.7')
+	>>> d.portion('foo', 1.0)
+	0.7
 	"""
 	# 1/10 resolution
 	resolution = 10
