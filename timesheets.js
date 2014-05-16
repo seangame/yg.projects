@@ -7,7 +7,7 @@ function CreateTimebills(data_in) {
 	var result = new Object();
 	var msg = validateTimeBills(data_in);
 	if (msg) {
-		result.status = "failed";
+		result.status = "fail";
 		result.message = msg;
 		return result;
 	}
