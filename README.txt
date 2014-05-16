@@ -5,6 +5,8 @@ yg.projects is a Python library representing the YouGov project management
 models. The library includes support for time accounting, NetSuite
 interaction, and calendars.
 
+This project requires Python 3.
+
 Timesheet Entry
 ===============
 
@@ -57,3 +59,14 @@ time entries in a few minutes. As of yet, there is no way to easily remove
 erroneous entries, so do use this technique with caution. Also, please be
 careful to always enter your time accurately, such that it reflects the
 number of hours actually worked on a given project.
+
+Developing
+==========
+
+``timesheet.js``, while developed here, must be uploaded to NetSuite for
+the updates to take effect. Only certain users (Nitin, Jason) have access to
+do this, so ask them for help.
+
+Tests may be easily run using pytest-runner::
+
+    python setup.py ptr
