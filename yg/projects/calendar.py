@@ -92,6 +92,14 @@ def print_holidays(cal=None):
 			"{holiday.observed:%A, %B %d} ||".format(**vars()))
 
 def date_range(start, end):
+	"""
+	>>> start = datetime.date(2014, 5, 16)
+	>>> end = datetime.date(2014, 5, 17)
+	>>> list(date_range(start, end))
+	[datetime.date(2014, 5, 16)]
+	"""
+	assert isinstance(start, datetime.date)
+	assert isinstance(end, datetime.date)
 	one_day = datetime.timedelta(days=1)
 	day = start
 	while day < end:
@@ -102,6 +110,26 @@ def month_days(input):
 	"""
 	Yield each day of a month indicated by the input month, such as 'May' or
 	'December' or 'Dec'.
+	>>> days = month_days('May')
+
+	days should be iterable
+	>>> hasattr(days, '__iter__')
+	True
+
+	>>> days = list(days)
+	>>> len(days)
+	31
+
+	>>> days[0].day
+	1
+	>>> days[-1].day
+	31
+
+	>>> days[0].year == datetime.date.today().year
+	True
+
+	>>> isinstance(days[0], datetime.date)
+	True
 	"""
 	start = dateutil.parser.parse(input).replace(day=1)
 	end = start + rd.relativedelta(months=1)
