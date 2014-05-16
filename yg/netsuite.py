@@ -133,9 +133,13 @@ class Entry:
 	@property
 	def trandate(self):
 		"""
-		The transaction date formatted for NetSuite
+		The transaction date formatted for a Javascript Date()
+
+		>>> entry = Entry(date=datetime.date(2014, 5, 14))
+		>>> entry.trandate
+		'2014-05-14'
 		"""
-		return self.date.strftime('%d/%m/%Y')
+		return self.date.strftime('%Y-%m-%d')
 
 	@classmethod
 	def solicit(cls):

@@ -14,7 +14,8 @@ function CreateTimebills(data_in) {
 	var timebills = data_in.timebill;
 	for (var timebillobject in timebills) {
 		var timebill = timebills[timebillobject];
-		var trandate = timebill.trandate;
+		var trandate = new Date(timebill.trandate);
+		var nsdate = nlapiDateToString(trandate, "date");
 		var customer = timebill.customer;
 		var casetaskevent = timebill.casetaskevent;
 		var hours = timebill.hours;
@@ -43,13 +44,13 @@ function validateTimeBills(data_in) {
 	var returnMessage = "";
 	for (var timebillobject in timebills) {
 		var timebill = timebills[timebillobject];
-		var trandate = timebill.trandate;
 		var customer = timebill.customer;
 		var casetaskevent = timebill.casetaskevent;
 		var hours = timebill.hours;
 		var memo = timebill.memo;
-		if (isNaN(nlapiStringToDate(trandate))) {
-			returnMessage += "Invalid date: '" + trandate + "'\n";
+		var trandate = new Date(timebill.trandate);
+		if (isNaN(trandate)) {
+			returnMessage += "Invalid date: '" + timebill.trandate + "' (must be a Javascript Date)\n";
 		}
 		if (customer == '') {
 			returnMessage += "Customer entry cannot be blank.'\n";
