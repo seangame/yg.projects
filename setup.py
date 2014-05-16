@@ -19,6 +19,10 @@ setup_params = dict(
 	namespace_packages=['yg'],
 	setup_requires=[
 		'hgtools',
+		'pytest-runner',
+	],
+	tests_require=[
+		'pytest',
 	],
 	entry_points=dict(
 		console_scripts=[
