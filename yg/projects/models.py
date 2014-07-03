@@ -53,6 +53,16 @@ class Distribution(dict):
 	foo's portion is 2/3 at a resolution of 1/10
 	>>> d.portion('foo', 1.0)
 	0.7
+
+	>>> import datetime
+	>>> days = [datetime.date.today()]
+	>>> tb = d.create_timebill(days, hours=11)
+	>>> len(tb)
+	2
+	>>> foo_entry = next(entry for entry in tb if entry.customer == 'foo')
+	>>> foo_entry.hours
+	7.3
+
 	"""
 	# 1/10 resolution
 	resolution = 10
