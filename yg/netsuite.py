@@ -42,7 +42,9 @@ class NetSuite:
 		if not resp.ok:
 			raise NetsuiteFailure(resp.json())
 		if resp.headers['Content-Type'].startswith('text/html'):
-			log.warning("Unexpected HTML response")
+			raise NetsuiteFailure("Unexpected HTML response")
+		if not resp.text:
+			# empty response, likely from a DELETE or PUT
 			return
 		data = resp.json()
 		if isinstance(data, dict) and data.get('status') == 'fail':
@@ -62,6 +64,12 @@ class NetSuite:
 		'December 14, 2014'
 		"""
 		return date.strftime('%B %d, %Y')
+
+	@classmethod
+	def param_url(cls, **data):
+		params = urllib.parse.urlencode(data)
+		return '&'.join([cls.restlet, params])
+
 
 class Credential(NetSuite):
 	path = '/rest/roles'
@@ -207,14 +215,22 @@ class TimeBill(NetSuite, list):
 		return self.handle_response(resp)
 
 	@classmethod
-	def clear_for_dates(cls, dates):
-		log.info("Deleting timesheets for %s.", dates)
+	def clear_for_date(cls, date):
+		log.info("Deleting timesheets for %s.", date)
 		headers = {
 			'Content-Type': 'application/json',
 		}
 		cred = Credential()
 		headers.update(cred.build_auth_header())
-		dates = list(map(cls.format_date, dates))
-		data = json.dumps(dict(dates=dates))
-		resp = session.delete(ns_url(cls.restlet), headers=headers, data=data)
+		path = cls.param_url(date=cls.format_date(date))
+		resp = session.get(ns_url(path), headers=headers)
+		items = cls.handle_response(resp)
+		import pdb; pdb.set_trace()
+		for item in items:
+			cls.delete_item(headers, items)
+
+	@classmethod
+	def delete_item(cls, headers, search_res):
+		path = cls.param_url(id=search_res['id'])
+		resp = session.delete(ns_url(path), headers=headers)
 		return cls.handle_response(resp)

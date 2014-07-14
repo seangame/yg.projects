@@ -66,21 +66,18 @@ function validateTimeBills(data_in) {
 	}
 }
 
-function DeleteTimebills(data_in) {
-	var dates = data_in.dates;
-	for(var date_idx in dates) {
-		var date = dates[date_idx];
-		var nsdate = nlapiDateToString(date, "date");
-		_delete_timebill_for(date);
+function GetTimebills(data_in) {
+	var filters = new Array();
+	if(data_in.date) {
+		var js_date = new Date(data_in.date);
+		var date = nlapiDateToString(js_date, "date");
+		var filter = new nlobjSearchFilter('trandate', null, 'equalTo', date);
+		filters.push(filter);
 	}
+	var results = nlapiSearchRecord('timebill', null, filters);
+	return results;
 }
 
-function _delete_timebill_for(date) {
-	var filter = new nlobjSearchFilter('trandate', null, 'equalTo', date);
-	var results = nlapiSearchRecord('timebill', null, filter);
-	nlapiLogExecution('DEBUG', "Deleting " + results.length + " records");
-	for(var result_idx in results) {
-		var id = results[result_idx].getId();
-		nlapiDeleteRecord('timebill', id);
-	}
+function DeleteTimebills(data_in) {
+	nlapiDeleteRecord('timebill', data_in.id);
 }
