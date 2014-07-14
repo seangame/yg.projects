@@ -67,14 +67,10 @@ function validateTimeBills(data_in) {
 }
 
 function GetTimebills(data_in) {
-	var filters = new Array();
-	if(data_in.date) {
-		var js_date = new Date(data_in.date);
-		var date = nlapiDateToString(js_date, "date");
-		var filter = new nlobjSearchFilter('trandate', null, 'equalTo', date);
-		filters.push(filter);
-	}
-	var results = nlapiSearchRecord('timebill', null, filters);
+	var js_date = new Date(data_in.date);
+	var date = nlapiDateToString(js_date, "date");
+	var filter = new nlobjSearchFilter('tranDate', null, 'equalTo', date)
+	var results = nlapiSearchRecord('timebill', null, filter);
 	return results;
 }
 
