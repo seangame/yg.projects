@@ -44,6 +44,20 @@ class NetSuite:
 			raise NetsuiteFailure(data['message'])
 		return data
 
+	@staticmethod
+	def format_date(date):
+		"""
+		Render a datetime.date as a Javascript Date()
+		Note that NetSuite doesn't appear to support ISO-8601
+		date formats, so use the only format known to work.
+
+		>>> NetSuite.format_date(datetime.date(2014, 5, 14))
+		'May 14, 2014'
+		>>> NetSuite.format_date(datetime.date(2014, 12, 14))
+		'December 14, 2014'
+		"""
+		return date.strftime('%B %d, %Y')
+
 class Credential(NetSuite):
 	path = '/rest/roles'
 	roles_auth = 'NLAuth nlauth_email={email}, nlauth_signature={password}'
@@ -133,17 +147,9 @@ class Entry:
 	@property
 	def trandate(self):
 		"""
-		The transaction date formatted for a Javascript Date() as constructed
-		in NetSuite. Note that NetSuite doesn't appear to support ISO-8601
-		date formats, so use the only format known to work.
-
-		>>> entry = Entry(date=datetime.date(2014, 5, 14))
-		>>> entry.trandate
-		'May 14, 2014'
-		>>> Entry(date=datetime.date(2014, 12, 14)).trandate
-		'December 14, 2014'
+		The transaction date formatted for NetSuite.
 		"""
-		return self.date.strftime('%B %d, %Y')
+		return self.format_date(self.date)
 
 	@classmethod
 	def solicit(cls):
