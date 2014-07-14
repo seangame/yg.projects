@@ -65,3 +65,22 @@ function validateTimeBills(data_in) {
 		return returnMessage;
 	}
 }
+
+function DeleteTimebills(data_in) {
+	var dates = data_in.dates;
+	for(var date_idx in dates) {
+		var date = dates[date_idx];
+		var nsdate = nlapiDateToString(date, "date");
+		_delete_timebill_for(date);
+	}
+}
+
+function _delete_timebill_for(date) {
+	var filter = new nlobjSearchFilter('trandate', null, 'equalTo', date);
+	var results = nlapiSearchRecord('timebill', null, filter);
+	nlapiLogExecution('DEBUG', "Deleting " + results.length + " records");
+	for(var result_idx in results) {
+		var id = results[result_idx].getId();
+		nlapiDeleteRecord('timebill', id);
+	}
+}
