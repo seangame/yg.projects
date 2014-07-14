@@ -36,7 +36,8 @@ class NetSuite:
 		if isinstance(o, decimal.Decimal):
 			return str(o)
 
-	def handle_response(self, resp):
+	@classmethod
+	def handle_response(cls, resp):
 		if not resp.ok:
 			raise NetsuiteFailure(resp.json())
 		data = resp.json()
