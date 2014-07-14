@@ -1,3 +1,4 @@
+import os
 import itertools
 import json
 import decimal
@@ -69,7 +70,7 @@ class Credential(NetSuite):
 			"nlauth_signature={password}, nlauth_role={role}")
 
 	def __init__(self):
-		self.email = input("email> ")
+		self.email = os.environ.get('NETSUITE_EMAIL', None) or input("email> ")
 		password = keyring.get_password(system, self.email)
 		if not password:
 			password = getpass.getpass()
