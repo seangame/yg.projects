@@ -40,6 +40,9 @@ class NetSuite:
 	def handle_response(cls, resp):
 		if not resp.ok:
 			raise NetsuiteFailure(resp.json())
+		if resp.headers['Content-Type'].startswith('text/html'):
+			log.warning("Unexpected HTML response")
+			return
 		data = resp.json()
 		if isinstance(data, dict) and data.get('status') == 'fail':
 			raise NetsuiteFailure(data['message'])
