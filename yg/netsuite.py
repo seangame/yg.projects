@@ -201,3 +201,16 @@ class TimeBill(NetSuite, list):
 		data = json.dumps(self.json, default=self.default_encode)
 		resp = session.post(ns_url(self.restlet), headers=headers, data=data)
 		return self.handle_response(resp)
+
+	@classmethod
+	def clear_for_dates(cls, dates):
+		log.info("Deleting timesheets for %s.", dates)
+		headers = {
+			'Content-Type': 'application/json',
+		}
+		cred = Credential()
+		headers.update(cred.build_auth_header())
+		dates = list(map(cls.format_date, dates))
+		data = json.dumps(dict(dates=dates))
+		resp = session.delete(ns_url(cls.restlet), headers=headers, data=data)
+		return cls.handle_response(resp)
