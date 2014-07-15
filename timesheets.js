@@ -69,7 +69,7 @@ function validateTimeBills(data_in) {
 function GetTimebills(data_in) {
 	var js_date = new Date(data_in.date);
 	var date = nlapiDateToString(js_date, "date");
-	var filter = new nlobjSearchFilter('tranDate', null, 'equalTo', date)
+	var filter = new nlobjSearchFilter('date', null, 'on', date)
 	var results = nlapiSearchRecord('timebill', null, filter);
 	return results;
 }
