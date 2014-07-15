@@ -54,11 +54,23 @@ vacation. It will allocate those 8 hours in a ratio of 6:4 Gryphon:Datum. It
 will submit the time entries to the "Sandbox" instance of NetSuite unless
 --prod is passed.
 
-Note that this routine should be used with care. It can create hundreds of
-time entries in a few minutes. As of yet, there is no way to easily remove
-erroneous entries, so do use this technique with caution. Also, please be
+With great power comes great responsibility. Please be
 careful to always enter your time accurately, such that it reflects the
 number of hours actually worked on a given project.
+
+Removing Entries
+================
+
+``yg.projects`` provides a relatively easy way to remove unwanted entries.
+If you've used something like enter-time.py above to add entries
+programmatically, but then found that you made a mistake or the entries did
+not populate properly, here is how you might clear those entries::
+
+    import yg.projects.calendar
+    import yg.netsuite
+    days = yg.projects.calendar.month_days('Dec')
+    for day in days:
+        yg.netsuite.TimeBill.clear_for_date(day)
 
 Developing
 ==========
