@@ -66,7 +66,8 @@ class TimeEntry:
 		projects = models.Projects.from_url()
 		dist = cls.get_project_distribution(projects)
 		tb = dist.create_timebill(days, hours=cls.calendar.hours_per_day)
-		print("Submitting", len(tb), "entries to NetSuite...")
+		tmpl = "Submitting {len_tb} entries to {yg.netsuite.system}..."
+		print(tmpl.format(len_tb=len(tb), yg=yg))
 		yg.netsuite.Credential().install()
 		with jaraco.util.timing.Stopwatch() as watch:
 			tb.submit()
