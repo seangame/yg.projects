@@ -22,7 +22,7 @@ class InteractiveEntry:
 		"""
 		parser = argparse.ArgumentParser()
 		jaraco.util.logging.add_arguments(parser)
-		yg.netsuite.offer_sandbox()
+		yg.netsuite.Sandbox.offer(parser)
 		return parser.parse_args()
 
 	@classmethod
@@ -52,7 +52,7 @@ class TimeEntry:
 	@staticmethod
 	def get_args():
 		parser = argparse.ArgumentParser()
-		yg.netsuite.offer_sandbox(parser)
+		yg.netsuite.Sandbox.offer(parser)
 		parser.add_argument('month', type=calendar.month_days)
 		return parser.parse_args()
 

@@ -18,25 +18,31 @@ root = 'https://rest.netsuite.com'
 ns_url = lambda path: urllib.parse.urljoin(root, path)
 system = "NetSuite"
 
-def use_sandbox():
-	global system, root
-	system += ' Sandbox'
-	root = root.replace('rest.netsuite', 'rest.sandbox.netsuite')
-
 session = requests.session()
 session.headers = {'Content-Type': 'application/json'}
 
 
-def offer_sandbox(parser):
-	"""
-	Given an argparse parser, add a --sandbox parameter which enables the
-	sandbox.
-	"""
-	class SandboxAction(argparse.Action):
-		def __call__(self, parser, namespace, values, option_string=None):
-			use_sandbox()
+class Sandbox:
+	@classmethod
+	def offer(cls, parser):
+		"""
+		Given an argparse parser, add a --sandbox parameter which enables the
+		sandbox.
+		"""
+		class SandboxAction(argparse.Action):
+			def __init__(self, *args, **kwargs):
+				super().__init__(*args, nargs=0, **kwargs)
 
-	parser.add_option('--sandbox', action=SandboxAction)
+			def __call__(self, *args, **kwargs):
+				cls.use()
+
+		parser.add_argument('--sandbox', action=SandboxAction)
+
+	@staticmethod
+	def use():
+		global system, root
+		system += ' Sandbox'
+		root = root.replace('rest.netsuite', 'rest.sandbox.netsuite')
 
 
 class NetSuite:
