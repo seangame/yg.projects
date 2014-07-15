@@ -11,7 +11,6 @@ from . import models
 class InteractiveEntry:
 	@classmethod
 	def submit_time(cls):
-		yg.netsuite.use_sandbox()
 		tb = yg.netsuite.TimeBill.solicit()
 		yg.netsuite.Credential().install()
 		tb.submit()
@@ -23,6 +22,7 @@ class InteractiveEntry:
 		"""
 		parser = argparse.ArgumentParser()
 		jaraco.util.logging.add_arguments(parser)
+		yg.netsuite.offer_sandbox()
 		return parser.parse_args()
 
 	@classmethod
@@ -52,16 +52,13 @@ class TimeEntry:
 	@staticmethod
 	def get_args():
 		parser = argparse.ArgumentParser()
+		yg.netsuite.offer_sandbox(parser)
 		parser.add_argument('month', type=calendar.month_days)
-		parser.add_argument('--prod', action="store_false", default=True,
-			dest="sandbox")
 		return parser.parse_args()
 
 	@classmethod
 	def run(cls):
 		args = cls.get_args()
-		if args.sandbox:
-			yg.netsuite.use_sandbox()
 		days = filter(cls.calendar.is_working_day, args.month)
 		projects = models.Projects.from_url()
 		dist = cls.get_project_distribution(projects)

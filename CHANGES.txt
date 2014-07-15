@@ -5,6 +5,8 @@
   session.
 * TimeBill object now expects a Credential to be installed into the session
   prior to invoking actions on NetSuite.
+* Default for TimeEntry is production, not sandbox. Pass --sandbox to use
+  sandbox.
 
 5.1
 ===

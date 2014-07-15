@@ -6,6 +6,7 @@ import getpass
 import logging
 import urllib.parse
 import datetime
+import argparse
 
 import dateutil.parser
 import requests
@@ -24,6 +25,18 @@ def use_sandbox():
 
 session = requests.session()
 session.headers = {'Content-Type': 'application/json'}
+
+
+def offer_sandbox(parser):
+	"""
+	Given an argparse parser, add a --sandbox parameter which enables the
+	sandbox.
+	"""
+	class SandboxAction(argparse.Action):
+		def __call__(self, parser, namespace, values, option_string=None):
+			use_sandbox()
+
+	parser.add_option('--sandbox', action=SandboxAction)
 
 
 class NetSuite:
