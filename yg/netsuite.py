@@ -23,6 +23,7 @@ def use_sandbox():
 	root = root.replace('rest.netsuite', 'rest.sandbox.netsuite')
 
 session = requests.session()
+session.headers = {'Content-Type': 'application/json'}
 
 
 class NetSuite:
@@ -203,33 +204,28 @@ class TimeBill(NetSuite, list):
 		entries = itertools.takewhile(bool, raw_entries)
 		return cls(entries)
 
-	def submit(self):
+	def submit(self, cred=None):
 		log.info("Submitting %s entries.", len(self))
-		headers = {
-			'Content-Type': 'application/json',
-		}
-		cred = Credential()
-		headers.update(cred.build_auth_header())
+		cred = cred or Credential()
+		headers = cred.build_auth_header()
 		data = json.dumps(self.json, default=self.default_encode)
 		resp = session.post(ns_url(self.restlet), headers=headers, data=data)
 		return self.handle_response(resp)
 
 	@classmethod
-	def clear_for_date(cls, date):
+	def clear_for_date(cls, date, cred=None):
 		log.info("Deleting timesheets for %s.", date)
-		headers = {
-			'Content-Type': 'application/json',
-		}
-		cred = Credential()
-		headers.update(cred.build_auth_header())
+		cred = cred or Credential()
+		headers = cred.build_auth_header()
 		path = cls.param_url(date=cls.format_date(date))
 		resp = session.get(ns_url(path), headers=headers)
 		items = cls.handle_response(resp) or []
 		for item in items:
-			cls.delete_item(headers, item)
+			cls.delete_item(item, cred)
 
 	@classmethod
-	def delete_item(cls, headers, search_res):
+	def delete_item(cls, search_res, cred=None):
+		headers = cred.build_auth_header()
 		path = cls.param_url(id=search_res['id'])
 		resp = session.delete(ns_url(path), headers=headers)
 		return cls.handle_response(resp)
