@@ -224,7 +224,7 @@ class TimeBill(NetSuite, list):
 		headers.update(cred.build_auth_header())
 		path = cls.param_url(date=cls.format_date(date))
 		resp = session.get(ns_url(path), headers=headers)
-		items = cls.handle_response(resp)
+		items = cls.handle_response(resp) or []
 		for item in items:
 			cls.delete_item(headers, item)
 
