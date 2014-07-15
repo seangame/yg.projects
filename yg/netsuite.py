@@ -225,9 +225,8 @@ class TimeBill(NetSuite, list):
 		path = cls.param_url(date=cls.format_date(date))
 		resp = session.get(ns_url(path), headers=headers)
 		items = cls.handle_response(resp)
-		import pdb; pdb.set_trace()
 		for item in items:
-			cls.delete_item(headers, items)
+			cls.delete_item(headers, item)
 
 	@classmethod
 	def delete_item(cls, headers, search_res):
