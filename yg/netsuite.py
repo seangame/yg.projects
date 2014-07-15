@@ -162,7 +162,7 @@ class Entry:
 		"""
 		The transaction date formatted for NetSuite.
 		"""
-		return self.format_date(self.date)
+		return NetSuite.format_date(self.date)
 
 	@classmethod
 	def solicit(cls):
