@@ -1,3 +1,11 @@
+6.0
+===
+
+* Added ``Credential.install`` which installs the credential into the
+  session.
+* TimeBill object now expects a Credential to be installed into the session
+  prior to invoking actions on NetSuite.
+
 5.1
 ===
 

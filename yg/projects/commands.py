@@ -12,7 +12,9 @@ class InteractiveEntry:
 	@classmethod
 	def submit_time(cls):
 		yg.netsuite.use_sandbox()
-		yg.netsuite.TimeBill.solicit().submit()
+		tb = yg.netsuite.TimeBill.solicit()
+		yg.netsuite.Credential().install()
+		tb.submit()
 
 	@classmethod
 	def get_args():
@@ -65,6 +67,7 @@ class TimeEntry:
 		dist = cls.get_project_distribution(projects)
 		tb = dist.create_timebill(days, hours=cls.calendar.hours_per_day)
 		print("Submitting", len(tb), "entries to NetSuite...")
+		yg.netsuite.Credential().install()
 		with jaraco.util.timing.Stopwatch() as watch:
 			tb.submit()
 		print("Completed in", watch.elapsed)
