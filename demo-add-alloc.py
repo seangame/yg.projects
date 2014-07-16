@@ -8,6 +8,7 @@ environment = 'production'
 
 script_ids = {
 	'production': 560,
+	# note these values will revert to 560 when the sandbox is reset
 	'sandbox': 566,
 	'SB4': 526, # note, SB4 doesn't have Resource Allocations
 	'SB6': 562,
