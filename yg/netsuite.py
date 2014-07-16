@@ -1,4 +1,5 @@
 import os
+import re
 import itertools
 import json
 import decimal
@@ -122,10 +123,13 @@ class Credential(NetSuite):
 		self.account = role['account']['internalId']
 		self.role = role['role']['internalId']
 
-	def use_admin(self):
+	def use_admin(self, account_pattern='^\d+$'):
 		roles = self.load_roles()
 		is_admin = lambda role: role['role']['name'] == 'Administrator'
-		role, = filter(is_admin, roles)
+		p = re.compile(account_pattern)
+		matches_account = lambda role: p.search(role['account']['internalId'])
+		role, = filter(matches_account, filter(is_admin, roles))
+
 		self.account = role['account']['internalId']
 		self.role = role['role']['internalId']
 
