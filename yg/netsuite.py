@@ -122,6 +122,13 @@ class Credential(NetSuite):
 		self.account = role['account']['internalId']
 		self.role = role['role']['internalId']
 
+	def use_admin(self):
+		roles = self.load_roles()
+		is_admin = lambda role: role['role']['name'] == 'Administrator'
+		role, = filter(is_admin, roles)
+		self.account = role['account']['internalId']
+		self.role = role['role']['internalId']
+
 	def load_roles(self):
 		headers=dict(Authorization=self.roles_auth.format(**vars(self)))
 		resp = session.get(ns_url(self.path), headers=headers)
