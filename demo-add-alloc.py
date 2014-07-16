@@ -4,13 +4,29 @@ import json
 
 import yg.netsuite as ns
 
-ns.Sandbox.use()
+environment = 'production'
 
-res_alloc_path = '/app/site/hosting/restlet.nl?script=562&deploy=1'
+script_ids = {
+	'production': 560,
+	'sandbox': 566,
+	'SB4': 526, # note, SB4 doesn't have Resource Allocations
+	'SB6': 562,
+}
+
+script_id = script_ids[environment]
+
+if environment != 'production':
+	ns.Sandbox.use()
+
+res_alloc_tmpl = '/app/site/hosting/restlet.nl?script={script_id}&deploy=1'
+res_alloc_path = res_alloc_tmpl.format(**locals())
 url = urllib.parse.urljoin(ns.root, res_alloc_path)
 
 cred = ns.Credential()
-cred.use_admin('SB6')
+if environment.startswith('SB'):
+	cred.use_admin(environment)
+else:
+	cred.use_admin()
 cred.install()
 
 # allocate 50 percent time from Jun 1 through Jul 31, 2014
