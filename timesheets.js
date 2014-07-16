@@ -68,12 +68,16 @@ function validateTimeBills(data_in) {
 
 function GetTimebills(data_in) {
 	var filters = new Array();
+	var filter = new nlobjSearchFilter('type', null, 'is', 'A');
+	filters.push(filter);
 	if(data_in.date) {
 		var js_date = new Date(data_in.date);
 		var date = nlapiDateToString(js_date, "date");
 		var filter = new nlobjSearchFilter('date', null, 'on', date);
 		filters.push(filter);
 	}
+	// var columns = new Array();
+    // columns.push(new nlobjSearchColumn('type'));
 	var results = nlapiSearchRecord('timebill', null, filters);
 	return results;
 }
