@@ -68,6 +68,7 @@ not populate properly, here is how you might clear those entries::
 
     import yg.projects.calendar
     import yg.netsuite
+    yg.netsuite.Credential().install()
     days = yg.projects.calendar.month_days('Dec')
     for day in days:
         yg.netsuite.TimeBill.clear_for_date(day)
