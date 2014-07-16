@@ -20,7 +20,7 @@ alloc = dict(
 	resource_id=271374,
 	type="2", # soft (use "1" for hard)
 	unit="P", # percent (use "H" for hours)
-	project=270907,
+	project_id=270907,
 	start_date=ns.NetSuite.format_date(datetime.date(2014,6,1)),
 	end_date=ns.NetSuite.format_date(datetime.date(2014,7,31)),
 )
