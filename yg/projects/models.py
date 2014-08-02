@@ -98,10 +98,9 @@ class SearchResult:
         the match is at the same place, if the name is shorter.
         """
         earlier = self.result.start() < other.result.start()
+        coincident = self.result.start() == other.result.start()
         shorter = len(self.project.name) < len(other.project.name)
-        if self.result.start() == other.result.start():
-            return shorter
-        return earlier
+        return coincident and shorter or earlier
 
     def __repr__(self):
         return '{project}: {result}'.format_map(vars(self))
