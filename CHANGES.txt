@@ -1,3 +1,9 @@
+6.1
+===
+
+* Projects now references *all projects* in NetSuite instead of just those
+  with Jason as a resource.
+
 6.0
 ===
 

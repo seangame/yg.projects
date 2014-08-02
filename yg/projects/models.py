@@ -23,7 +23,7 @@ class Project:
 
 class Projects(list):
     root = 'https://yg-public.s3.amazonaws.com/'
-    projects_loc = '/r/13/projects.csv'
+    projects_loc = '/r/13/AllProjectswithTasksResults192.csv'
 
     @classmethod
     def from_csv(cls, filename='projects.csv'):
