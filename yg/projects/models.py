@@ -70,25 +70,38 @@ class Projects(list):
         >>> ps.best('project')
         d anon project with long name
         """
-        expression_tmpls = (
-            '^{short_name}$', # exact
-            '^{short_name}', # initial
-            '{short_name}', # contains
-        )
-        # capture the local vars because a generator expression cannot reach
-        #  the variables in this scope
-        l_vars = locals()
-        expressions = (tmpl.format_map(l_vars) for tmpl in expression_tmpls)
-        name_length = lambda p: len(p.name)
-        matches = (
-            project
-            # important: loop over expressions first
-            for expression in expressions
-            for project in sorted(self, key=name_length)
-            if re.search(expression, project.name)
-        )
-        return next(matches)
+        searches = map(ProjectSearch(short_name), self)
+        matches = filter(None, searches)
+        matched = next(iter(sorted(matches)))
+        return matched.project
     __getattr__ = best
+
+class ProjectSearch(str):
+    def __call__(self, project):
+        return SearchResult(re.search(self, project.name), project)
+
+class SearchResult:
+    def __init__(self, result, project):
+        self.result = result
+        self.project = project
+
+    def __bool__(self):
+        return bool(self.result)
+
+    def __lt__(self, other):
+        """
+        A result is superior (less than) another if it matches earlier or if
+        the match is at the same place, if the name is shorter.
+        """
+        earlier = self.result.start() < other.result.start()
+        shorter = len(self.project.name) < len(other.project.name)
+        if self.result.start() == other.result.start():
+            return shorter
+        return earlier
+
+    def __repr__(self):
+        return '{project}: {result}'.format_map(vars(self))
+
 
 class Distribution(dict):
     """
