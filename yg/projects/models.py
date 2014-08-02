@@ -7,6 +7,7 @@ import requests
 
 import yg.netsuite
 
+
 class Project:
     def __init__(self, **params):
         vars(self).update(params)
@@ -18,6 +19,7 @@ class Project:
 
     def __repr__(self):
         return ' '.join((self.id, self.name))
+
 
 class Projects(list):
     root = 'https://yg-public.s3.amazonaws.com/'
@@ -76,9 +78,11 @@ class Projects(list):
         return matched.project
     __getattr__ = best
 
+
 class ProjectSearch(str):
     def __call__(self, project):
         return SearchResult(re.search(self, project.name), project)
+
 
 class SearchResult:
     def __init__(self, result, project):
