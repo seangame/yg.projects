@@ -22,7 +22,7 @@ class Project:
         return self.name < other.name and len(self.name) < len(other.name)
 
 class Projects(list):
-    root = 'http://yg-public.s3.amazonaws.com/'
+    root = 'https://yg-public.s3.amazonaws.com/'
     projects_loc = '/r/13/projects.csv'
 
     @classmethod
