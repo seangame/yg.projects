@@ -42,6 +42,36 @@ class Projects(list):
     def best(self, short_name):
         """
         Return the best project for the supplied name
+
+        Consider this list of projects:
+
+        >>> ps = Projects([
+        ...     Project(name='Gryphon', id='a'),
+        ...     Project(name='Gryphon 4', id='b'),
+        ...     Project(name='A Gryphon project', id='c'),
+        ...     Project(name='anon project', id='d')
+        ... ])
+
+        Regardless of the order the projects are defined,
+        >>> import random
+        >>> random.shuffle(ps)
+
+        An exact match always matches first,
+        >>> ps.best('Gryphon')
+        a Gryphon
+        >>> ps.best('Gryphon 4')
+        b Gryphon 4
+
+        Shorter matches always take precedence,
+        >>> ps.best('Gryph')
+        a Gryphon
+
+        >>> ps.best('A Gryphon')
+        c A Gryphon project
+
+        And an ambiguous match should match the shortest one.
+        >>> ps.best('project')
+        d anon project
         """
         expression_tmpls = (
             '^{short_name}$', # exact
@@ -52,11 +82,12 @@ class Projects(list):
         #  the variables in this scope
         l_vars = locals()
         expressions = (tmpl.format_map(l_vars) for tmpl in expression_tmpls)
+        name_length = lambda p: len(p.name)
         matches = (
             project
             # important: loop over expressions first
             for expression in expressions
-            for project in sorted(self)
+            for project in sorted(self, key=name_length)
             if re.search(expression, project.name)
         )
         return next(matches)
