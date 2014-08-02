@@ -39,11 +39,26 @@ class Projects(list):
         return cls(map(Project.from_dict, csv.DictReader(lines)))
 
     def best(self, short_name):
-        return next(
+        """
+        Return the best project for the supplied name
+        """
+        exact_matches = (
             project
-            for project in sorted(self)
+            for project in self
+            if project.name == short_name
+        )
+        initial_matches = (
+            project
+            for project in self
+            if project.name.startswith(short_name)
+        )
+        contains_match = (
+            project for project in sorted(self)
             if short_name in project.name
         )
+        matches = itertools.chain(exact_matches, initial_matches,
+            contains_match)
+        return next(matches)
     __getattr__ = best
 
 class Distribution(dict):
