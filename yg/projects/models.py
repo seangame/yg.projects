@@ -19,9 +19,6 @@ class Project:
     def __repr__(self):
         return ' '.join((self.id, self.name))
 
-    def __lt__(self, other):
-        return self.name < other.name and len(self.name) < len(other.name)
-
 class Projects(list):
     root = 'https://yg-public.s3.amazonaws.com/'
     projects_loc = '/r/13/AllProjectswithTasksResults192.csv'
