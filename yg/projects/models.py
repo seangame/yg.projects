@@ -21,14 +21,15 @@ class Project:
         return self.name < other.name and len(self.name) < len(other.name)
 
 class Projects(list):
+    projects_loc = 'http://yg-public.s3.amazonaws.com/r/13/projects.csv'
+
     @classmethod
     def from_csv(cls, filename='projects.csv'):
         with open(filename) as stream:
             return cls(map(Project.from_dict, csv.DictReader(stream)))
 
     @classmethod
-    def from_url(cls,
-            url='http://yg-public.s3.amazonaws.com/r/13/projects.csv'):
+    def from_url(cls, url=projects_loc):
         resp = requests.get(url, stream=True)
         resp.raise_for_status()
         lines = resp.iter_lines(decode_unicode=True)
