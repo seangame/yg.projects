@@ -1,3 +1,4 @@
+import re
 import csv
 import itertools
 import urllib.parse
@@ -42,22 +43,22 @@ class Projects(list):
         """
         Return the best project for the supplied name
         """
-        exact_matches = (
+        expression_tmpls = (
+            '^{short_name}$', # exact
+            '^{short_name}', # initial
+            '{short_name}', # contains
+        )
+        # capture the local vars because a generator expression cannot reach
+        #  the variables in this scope
+        l_vars = locals()
+        expressions = (tmpl.format_map(l_vars) for tmpl in expression_tmpls)
+        matches = (
             project
-            for project in self
-            if project.name == short_name
+            # important: loop over expressions first
+            for expression in expressions
+            for project in sorted(self)
+            if re.search(expression, project.name)
         )
-        initial_matches = (
-            project
-            for project in self
-            if project.name.startswith(short_name)
-        )
-        contains_match = (
-            project for project in sorted(self)
-            if short_name in project.name
-        )
-        matches = itertools.chain(exact_matches, initial_matches,
-            contains_match)
         return next(matches)
     __getattr__ = best
 
