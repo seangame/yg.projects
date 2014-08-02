@@ -46,7 +46,7 @@ class Projects(list):
         ...     Project(name='Gryphon', id='a'),
         ...     Project(name='Gryphon 4', id='b'),
         ...     Project(name='A Gryphon project', id='c'),
-        ...     Project(name='anon project', id='d')
+        ...     Project(name='anon project with long name', id='d')
         ... ])
 
         Regardless of the order the projects are defined,
@@ -66,9 +66,9 @@ class Projects(list):
         >>> ps.best('A Gryphon')
         c A Gryphon project
 
-        And an ambiguous match should match the shortest one.
+        And an ambiguous match should prefer the one that matches earliest.
         >>> ps.best('project')
-        d anon project
+        d anon project with long name
         """
         expression_tmpls = (
             '^{short_name}$', # exact
