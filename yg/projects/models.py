@@ -1,5 +1,6 @@
 import csv
 import itertools
+import urllib.parse
 
 import requests
 
@@ -21,7 +22,8 @@ class Project:
         return self.name < other.name and len(self.name) < len(other.name)
 
 class Projects(list):
-    projects_loc = 'http://yg-public.s3.amazonaws.com/r/13/projects.csv'
+    root = 'http://yg-public.s3.amazonaws.com/'
+    projects_loc = '/r/13/projects.csv'
 
     @classmethod
     def from_csv(cls, filename='projects.csv'):
@@ -30,6 +32,7 @@ class Projects(list):
 
     @classmethod
     def from_url(cls, url=projects_loc):
+        url = urllib.parse.urljoin(cls.root, url)
         resp = requests.get(url, stream=True)
         resp.raise_for_status()
         lines = resp.iter_lines(decode_unicode=True)
