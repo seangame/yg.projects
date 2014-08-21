@@ -19,7 +19,7 @@ class Project:
         return cls(**d)
 
     def __repr__(self):
-        return ' '.join((self.id, self.name))
+        return '{id} {name}'.format_map(vars(self))
 
 
 class ProjectId(str):
