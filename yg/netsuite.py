@@ -270,9 +270,24 @@ class TimeBill(NetSuite, list):
         return cls.handle_response(resp)
 
 
+class Project:
+    def __init__(self, **kwargs):
+        vars(self).update(kwargs)
+
+    @classmethod
+    def from_lookup(cls, dict):
+        dict.update(dict.pop('columns'))
+        return cls(**dict)
+
+    def __repr__(self):
+        tmpl = "Project(altname={altname}, entityid={entityid})"
+        return tmpl.format_map(vars(self))
+
 class Projects(list):
     path = '/app/site/hosting/restlet.nl?script=569&deploy=1'
 
-    def load(self):
-        data = session.get(ns_url(self.path))
-        import pdb; pdb.set_trace()
+    @classmethod
+    def load(cls):
+        resp = session.get(ns_url(cls.path))
+        resp.raise_for_status()
+        return Projects(map(Project.from_lookup, resp.json()))
