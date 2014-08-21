@@ -105,9 +105,13 @@ class DateRange:
         self.end = end
 
     def __iter__(self):
+        days = self._days_from(self.start)
+        return itertools.takewhile(self.__contains__, days)
+
+    @staticmethod
+    def _days_from(day):
         one_day = datetime.timedelta(days=1)
-        day = self.start
-        while day in self:
+        while True:
             yield day
             day += one_day
 
