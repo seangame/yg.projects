@@ -1,3 +1,14 @@
+6.5
+===
+
+* Replaced calendar.date_range with a DateRange class. date_range function
+  retained for compatibility.
+
+6.4
+===
+
+* Added support for preferring a subsidiary when selecting projects by name.
+
 6.3
 ===
 

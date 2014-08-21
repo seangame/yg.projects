@@ -118,6 +118,9 @@ class DateRange:
     def __contains__(self, date):
         return self.start <= date < self.end
 
+date_range = DateRange
+"alias for compatibility"
+
 
 def month_days(input):
     """
