@@ -11,6 +11,7 @@ import yg.netsuite
 class Project:
     def __init__(self, **params):
         vars(self).update(params)
+        self.id = ProjectId(self.id)
 
     @classmethod
     def from_dict(cls, d):
@@ -19,6 +20,24 @@ class Project:
 
     def __repr__(self):
         return ' '.join((self.id, self.name))
+
+
+class ProjectId(str):
+    id_pattern = re.compile(r'^(?P<prefix>[A-Za-z]+)?(?P<number>\d+)$')
+
+    @property
+    def prefix(self):
+        match = self.id_pattern.match(self)
+        if not match:
+            return
+        return match.groupdict()['prefix']
+
+    @property
+    def number(self):
+        match = self.id_pattern.match(self)
+        if not match:
+            return
+        return int(match.groupdict()['number'])
 
 
 class Projects(list):
@@ -45,10 +64,10 @@ class Projects(list):
         Consider this list of projects:
 
         >>> ps = Projects([
-        ...     Project(name='Gryphon', id='a'),
-        ...     Project(name='Gryphon 4', id='b'),
-        ...     Project(name='A Gryphon project', id='c'),
-        ...     Project(name='anon project with long name', id='d')
+        ...     Project(name='Gryphon', id='a1'),
+        ...     Project(name='Gryphon 4', id='b1'),
+        ...     Project(name='A Gryphon project', id='c1'),
+        ...     Project(name='anon project with long name', id='d1')
         ... ])
 
         Regardless of the order the projects are defined,
@@ -57,26 +76,46 @@ class Projects(list):
 
         An exact match always matches first,
         >>> ps.best('Gryphon')
-        a Gryphon
+        a1 Gryphon
         >>> ps.best('Gryphon 4')
-        b Gryphon 4
+        b1 Gryphon 4
 
         Shorter matches always take precedence,
         >>> ps.best('Gryph')
-        a Gryphon
+        a1 Gryphon
 
         >>> ps.best('A Gryphon')
-        c A Gryphon project
+        c1 A Gryphon project
 
         And an ambiguous match should prefer the one that matches earliest.
         >>> ps.best('project')
-        d anon project with long name
+        d1 anon project with long name
         """
         searches = map(ProjectSearch(short_name), self)
         matches = filter(None, searches)
         matched = next(iter(sorted(matches)))
         return matched.project
     __getattr__ = best
+
+    def prefer_subsidiary(self, subsidiary_prefix):
+        """
+        Move projects in the preferred subsidiary to the front.
+        ``subsidiary_prefix`` may be None or '', having no effect.
+
+        >>> ps = Projects([
+        ...     Project(name='Gryphon', id='a1'),
+        ...     Project(name='Gryphon', id='b1'),
+        ... ])
+
+        >>> ps.prefer_subsidiary('a')
+        >>> ps.Gryphon.id
+        'a1'
+        >>> ps.prefer_subsidiary('b')
+        >>> ps.Gryphon.id
+        'b1'
+        """
+        by_subsidiary=lambda proj: proj.id.prefix != subsidiary_prefix
+        self.sort(key=by_subsidiary)
 
 
 class ProjectSearch(str):

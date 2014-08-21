@@ -61,6 +61,8 @@ class TimeEntry:
         args = cls.get_args()
         days = filter(cls.calendar.is_working_day, args.month)
         projects = models.Projects.from_url()
+        preferred_subsidiary = getattr(cls, 'prefer_subsidiary', '')
+        projects.prefer_subsidiary(preferred_subsidiary)
         dist = cls.get_project_distribution(projects)
         tb = dist.create_timebill(days, hours=cls.calendar.hours_per_day)
         tmpl = "Submitting {len_tb} entries to {yg.netsuite.system}..."
