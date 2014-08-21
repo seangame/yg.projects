@@ -91,20 +91,29 @@ def print_holidays(cal=None):
         print("|| {holiday.name} || {holiday.indication} || "
             "{holiday.observed:%A, %B %d} ||".format(**vars()))
 
-def date_range(start, end):
+class DateRange:
     """
     >>> start = datetime.date(2014, 5, 16)
     >>> end = datetime.date(2014, 5, 17)
-    >>> list(date_range(start, end))
+    >>> list(DateRange(start, end))
     [datetime.date(2014, 5, 16)]
     """
-    assert isinstance(start, datetime.date)
-    assert isinstance(end, datetime.date)
-    one_day = datetime.timedelta(days=1)
-    day = start
-    while day < end:
-        yield day
-        day += one_day
+    def __init__(self, start, end):
+        assert isinstance(start, datetime.date)
+        assert isinstance(end, datetime.date)
+        self.start = start
+        self.end = end
+
+    def __iter__(self):
+        one_day = datetime.timedelta(days=1)
+        day = self.start
+        while day in self:
+            yield day
+            day += one_day
+
+    def __contains__(self, date):
+        return self.start <= date < self.end
+
 
 def month_days(input):
     """
@@ -133,7 +142,7 @@ def month_days(input):
     """
     start = dateutil.parser.parse(input).replace(day=1).date()
     end = start + rd.relativedelta(months=1)
-    return date_range(start, end)
+    return DateRange(start, end)
 
 if __name__ == '__main__':
     print_holidays()
