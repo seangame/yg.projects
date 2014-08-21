@@ -115,13 +115,21 @@ class Credential(NetSuite):
         return role['role']['name'].startswith('Employee Cent')
 
     def find_best_role(self):
-        roles = self.load_roles()
+        roles = self.sorted(self.load_roles())
         role = next(filter(self.is_suitable_role, roles), None)
         if not role:
             print("No suitable role")
             raise SystemExit(1)
         self.account = role['account']['internalId']
         self.role = role['role']['internalId']
+
+    @staticmethod
+    def sorted(roles):
+        # sort the roles such that the shortest accounts appear first (to
+        # prefer primary sandbox to alternate sandboxes)
+        by_account_name = lambda role: role['account']['name']
+        roles.sort(key=by_account_name)
+        return roles
 
     def use_admin(self, account_pattern='^\d+$'):
         roles = self.load_roles()
@@ -260,3 +268,11 @@ class TimeBill(NetSuite, list):
         path = cls.param_url(id=search_res['id'])
         resp = session.delete(ns_url(path))
         return cls.handle_response(resp)
+
+
+class Projects(list):
+    path = '/app/site/hosting/restlet.nl?script=569&deploy=1'
+
+    def load(self):
+        data = session.get(ns_url(self.path))
+        import pdb; pdb.set_trace()
